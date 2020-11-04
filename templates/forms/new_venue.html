@@ -30,13 +30,37 @@
       <div class="form-group">
         <label for="genres">Genres</label>
         <small>Ctrl+Click to select multiple</small>
-        {{ form.genres(class_ = 'form-control', placeholder='Genres, separated by commas', id=form.state, autofocus = true) }}
+        {{ form.genres(class_ = 'form-control', placeholder='Genres, separated by commas', autofocus = true) }}
       </div>
       <div class="form-group">
-          <label for="genres">Facebook Link</label>
-          {{ form.facebook_link(class_ = 'form-control', placeholder='http://', id=form.state, autofocus = true) }}
-        </div>
+        <label for="image_link">Image Link</label>
+        {{ form.image_link(class_ = 'form-control', placeholder='http://', autofocus = true) }}
+    </div>
+      <div class="form-group">
+          <label for="facebook_link">Facebook Link</label>
+          {{ form.facebook_link(class_ = 'form-control', placeholder='http://', autofocus = true) }}
+      </div>
       <input type="submit" value="Create Venue" class="btn btn-primary btn-lg btn-block">
     </form>
   </div>
+  <script>
+    document.getElementsByClassName('form')[0].onsubmit = function(e) {
+      e.preventDefault();
+      fetch('/venues/create', {
+        method: 'POST',
+        body: JSON.stringify({
+          'name': document.getElementById('name').value,
+          'city': document.getElementById('city').value,
+          'state': document.getElementById('state').value,
+          'address': document.getElementById('address').value,
+          'phone': document.getElementById('phone').value,
+          'image_link': document.getElementById('image_link').value,
+          'facebook_link': document.getElementById('facebook_link').value
+        }),
+        headers: {
+          'Content-Type': 'application/json'
+        }
+      })
+    }
+  </script>
 {% endblock %}
