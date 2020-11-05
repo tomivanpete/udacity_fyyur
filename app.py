@@ -472,11 +472,10 @@ def create_artist_submission():
     state = request.form['state']
     address = request.form['address']
     phone = request.form['phone']
-    generes = request.form.getlist('genres')
+    genres = ';'.join(request.form.getlist('genres'))
     image_link = request.form['image_link']
-    website = request.form['website']
     facebook_link = request.form['facebook_link']
-    seeking_talent = request.form['seeking_talent'] != None
+    seeking_talent = request.form.get('seeking_talent') != None
 
     artist = Artist(name=name,
                   city=city,
@@ -485,7 +484,6 @@ def create_artist_submission():
                   phone=phone,
                   genres=genres,
                   image_link=image_link,
-                  website=website,
                   facebook_link=facebook_link,
                   seeking_talent=seeking_talent)
     db.session.add(artist)
