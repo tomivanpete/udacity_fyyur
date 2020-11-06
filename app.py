@@ -241,14 +241,14 @@ def create_venue_submission():
   # TODO: modify data to be the data object returned from db insertion
   error = False
   try:
-    name = request.form['name']
-    city = request.form['city']
-    state = request.form['state']
-    address = request.form['address']
-    phone = request.form['phone']
+    name = request.form.get('name')
+    city = request.form.get('city')
+    state = request.form.get('state')
+    address = request.form.get('address')
+    phone = request.form.get('phone')
     genres = ';'.join(request.form.getlist('genres'))
-    image_link = request.form['image_link']
-    facebook_link = request.form['facebook_link']
+    image_link = request.form.get('image_link')
+    facebook_link = request.form.get('facebook_link')
     seeking_talent = request.form.get('seeking_talent') != None
 
     venue = Venue(name=name,
@@ -467,15 +467,15 @@ def create_artist_submission():
   # TODO: modify data to be the data object returned from db insertion
   error = False
   try:
-    name = request.form['name']
-    city = request.form['city']
-    state = request.form['state']
-    address = request.form['address']
-    phone = request.form['phone']
+    name = request.form.get('name')
+    city = request.form.get('city')
+    state = request.form.get('state')
+    address = request.form.get('address')
+    phone = request.form.get('phone')
     genres = ';'.join(request.form.getlist('genres'))
-    image_link = request.form['image_link']
-    facebook_link = request.form['facebook_link']
-    seeking_talent = request.form.get('seeking_talent') != None
+    image_link = request.form.get('image_link')
+    facebook_link = request.form.get('facebook_link')
+    seeking_venue = request.form.get('seeking_venue') != None
 
     artist = Artist(name=name,
                   city=city,
@@ -485,7 +485,7 @@ def create_artist_submission():
                   genres=genres,
                   image_link=image_link,
                   facebook_link=facebook_link,
-                  seeking_talent=seeking_talent)
+                  seeking_venue=seeking_venue)
     db.session.add(artist)
     db.session.commit()
     # on successful db insert, flash success
