@@ -23,7 +23,6 @@ app.config.from_object('config')
 db = SQLAlchemy(app)
 
 # TODO: connect to a local postgresql database
-migrate = Migrate(app, db)
 
 #----------------------------------------------------------------------------#
 # Models.
@@ -48,6 +47,7 @@ class Venue(db.Model):
     facebook_link = db.Column(db.String(120))
     seeking_talent = db.Column(db.Boolean, nullable=False, default=False)
     seeking_description = db.Column(db.String)
+    area_id = db.Column(db.Integer, db.ForeignKey('areas.id'), nullable=False)
 
     def __repr__(self):
       return f'<List: {self.id} {self.name}>'
@@ -72,7 +72,15 @@ class Artist(db.Model):
 
     # TODO: implement any missing fields, as a database migration using Flask-Migrate
 
+class Areas(db.Model):
+    __tablename__ = 'areas'
+  
+    id = db.Column(db.Integer, primary_key=True)
+    city = db.Column(db.String(120))
+    state = db.Column(db.String(120))
+
 # TODO Implement Show and Artist models, and complete all model relationships and properties, as a database migration.
+migrate = Migrate(app, db)
 
 #----------------------------------------------------------------------------#
 # Filters.
@@ -104,6 +112,7 @@ def index():
 def venues():
   # TODO: replace with real venues data.
   #       num_shows should be aggregated based on number of upcoming shows per venue.
+  areas = Venue.query.group_by('city').all()
   data=[{
     "city": "San Francisco",
     "state": "CA",
@@ -125,7 +134,7 @@ def venues():
       "num_upcoming_shows": 0,
     }]
   }]
-  return render_template('pages/venues.html', areas=data)
+  return render_template('pages/venues.html', areas=venues)
 
 @app.route('/venues/search', methods=['POST'])
 def search_venues():
@@ -249,6 +258,7 @@ def create_venue_submission():
     genres = ';'.join(request.form.getlist('genres'))
     image_link = request.form.get('image_link')
     facebook_link = request.form.get('facebook_link')
+    website = request.form.get('website')
     seeking_talent = request.form.get('seeking_talent') != None
 
     venue = Venue(name=name,
@@ -259,6 +269,7 @@ def create_venue_submission():
                   genres=genres,
                   image_link=image_link,
                   facebook_link=facebook_link,
+                  website=website,
                   seeking_talent=seeking_talent)
     db.session.add(venue)
     db.session.commit()
@@ -293,6 +304,7 @@ def delete_venue(venue_id):
 @app.route('/artists')
 def artists():
   # TODO: replace with real data returned from querying the database
+  artists = Artist.query.order_by('id').all()
   data=[{
     "id": 4,
     "name": "Guns N Petals",
@@ -303,7 +315,7 @@ def artists():
     "id": 6,
     "name": "The Wild Sax Band",
   }]
-  return render_template('pages/artists.html', artists=data)
+  return render_template('pages/artists.html', artists=artists)
 
 @app.route('/artists/search', methods=['POST'])
 def search_artists():
@@ -324,6 +336,7 @@ def search_artists():
 def show_artist(artist_id):
   # shows the venue page with the given venue_id
   # TODO: replace with real venue data from the venues table, using venue_id
+  artist = Artist.query.get(artist_id)
   data1={
     "id": 4,
     "name": "Guns N Petals",
@@ -395,8 +408,8 @@ def show_artist(artist_id):
     "past_shows_count": 0,
     "upcoming_shows_count": 3,
   }
-  data = list(filter(lambda d: d['id'] == artist_id, [data1, data2, data3]))[0]
-  return render_template('pages/show_artist.html', artist=data)
+  #data = list(filter(lambda d: d['id'] == artist_id, [data1, data2, data3]))[0]
+  return render_template('pages/show_artist.html', artist=artist)
 
 #  Update
 #  ----------------------------------------------------------------
@@ -470,21 +483,21 @@ def create_artist_submission():
     name = request.form.get('name')
     city = request.form.get('city')
     state = request.form.get('state')
-    address = request.form.get('address')
     phone = request.form.get('phone')
     genres = ';'.join(request.form.getlist('genres'))
     image_link = request.form.get('image_link')
     facebook_link = request.form.get('facebook_link')
+    website = request.form.get('website')
     seeking_venue = request.form.get('seeking_venue') != None
 
     artist = Artist(name=name,
                   city=city,
                   state=state,
-                  address=address,
                   phone=phone,
                   genres=genres,
                   image_link=image_link,
                   facebook_link=facebook_link,
+                  website=website,
                   seeking_venue=seeking_venue)
     db.session.add(artist)
     db.session.commit()
