@@ -45,6 +45,7 @@ class Venue(db.Model):
     genres = db.Column(db.String)
     image_link = db.Column(db.String(500))
     facebook_link = db.Column(db.String(120))
+    website = db.Column(db.String(120))
     seeking_talent = db.Column(db.Boolean, nullable=False, default=False)
     seeking_description = db.Column(db.String)
     area_id = db.Column(db.Integer, db.ForeignKey('areas.id'), nullable=False)
@@ -72,12 +73,13 @@ class Artist(db.Model):
 
     # TODO: implement any missing fields, as a database migration using Flask-Migrate
 
-class Areas(db.Model):
+class Area(db.Model):
     __tablename__ = 'areas'
   
     id = db.Column(db.Integer, primary_key=True)
     city = db.Column(db.String(120))
     state = db.Column(db.String(120))
+    venues = db.relationship('Venue', backref='area', lazy=True, cascade='all, delete-orphan')
 
 # TODO Implement Show and Artist models, and complete all model relationships and properties, as a database migration.
 migrate = Migrate(app, db)
@@ -112,7 +114,7 @@ def index():
 def venues():
   # TODO: replace with real venues data.
   #       num_shows should be aggregated based on number of upcoming shows per venue.
-  areas = Venue.query.group_by('city').all()
+  areas = Area.query.order_by('id').all()
   data=[{
     "city": "San Francisco",
     "state": "CA",
@@ -134,7 +136,7 @@ def venues():
       "num_upcoming_shows": 0,
     }]
   }]
-  return render_template('pages/venues.html', areas=venues)
+  return render_template('pages/venues.html', areas=areas)
 
 @app.route('/venues/search', methods=['POST'])
 def search_venues():
@@ -233,7 +235,7 @@ def show_venue(venue_id):
     "past_shows_count": 1,
     "upcoming_shows_count": 1,
   }
-  data = list(filter(lambda d: d['id'] == venue_id, [data1, data2, data3]))[0]
+  #data = list(filter(lambda d: d['id'] == venue_id, [data1, data2, data3]))[0]
   return render_template('pages/show_venue.html', venue=venue)
 
 #  Create Venue
@@ -260,7 +262,11 @@ def create_venue_submission():
     facebook_link = request.form.get('facebook_link')
     website = request.form.get('website')
     seeking_talent = request.form.get('seeking_talent') != None
-
+    
+    area = db.session.query(Area).filter(Area.city == city, Area.state == state).first()
+    if area is None:
+      area = Area(city=city, state=state)
+    
     venue = Venue(name=name,
                   city=city,
                   state=state,
@@ -271,6 +277,7 @@ def create_venue_submission():
                   facebook_link=facebook_link,
                   website=website,
                   seeking_talent=seeking_talent)
+    venue.area = area
     db.session.add(venue)
     db.session.commit()
     # on successful db insert, flash success
