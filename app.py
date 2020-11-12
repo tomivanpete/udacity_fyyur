@@ -10,7 +10,7 @@ from flask_moment import Moment
 from flask_sqlalchemy import SQLAlchemy
 import logging, sys
 from logging import Formatter, FileHandler
-from flask_wtf import Form
+from flask_wtf import FlaskForm
 from forms import *
 from flask_migrate import Migrate
 #----------------------------------------------------------------------------#
@@ -143,6 +143,9 @@ def search_venues():
   # TODO: implement search on artists with partial string search. Ensure it is case-insensitive.
   # seach for Hop should return "The Musical Hop".
   # search for "Music" should return "The Musical Hop" and "Park Square Live Music & Coffee"
+  search_term=request.form.get('search_term', '')
+  search_results = db.session.query(Venue).filter(Venue.name.ilike('%'+search_term+'%')).all()
+  results_count = len(search_results)
   response={
     "count": 1,
     "data": [{
@@ -151,7 +154,7 @@ def search_venues():
       "num_upcoming_shows": 0,
     }]
   }
-  return render_template('pages/search_venues.html', results=response, search_term=request.form.get('search_term', ''))
+  return render_template('pages/search_venues.html', results=search_results, search_term=search_term, results_count=results_count)
 
 @app.route('/venues/<int:venue_id>')
 def show_venue(venue_id):
@@ -329,6 +332,9 @@ def search_artists():
   # TODO: implement search on artists with partial string search. Ensure it is case-insensitive.
   # seach for "A" should return "Guns N Petals", "Matt Quevado", and "The Wild Sax Band".
   # search for "band" should return "The Wild Sax Band".
+  search_term = request.form.get('search_term', '')
+  search_results = db.session.query(Artist).filter(Artist.name.ilike('%'+search_term+'%')).all()
+  results_count = len(search_results)
   response={
     "count": 1,
     "data": [{
@@ -337,7 +343,7 @@ def search_artists():
       "num_upcoming_shows": 0,
     }]
   }
-  return render_template('pages/search_artists.html', results=response, search_term=request.form.get('search_term', ''))
+  return render_template('pages/search_artists.html', results=search_results, search_term=search_term, results_count=results_count)
 
 @app.route('/artists/<int:artist_id>')
 def show_artist(artist_id):
