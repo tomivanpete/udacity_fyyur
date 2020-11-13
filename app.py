@@ -28,13 +28,13 @@ db = SQLAlchemy(app)
 # Models.
 #----------------------------------------------------------------------------#
 
-shows = db.Table('shows',
-        db.Column('artist_id', db.Integer, db.ForeignKey('artists.id'), primary_key=True),
-        db.Column('venue_id', db.Integer, db.ForeignKey('venues.id'), primary_key=True),
+shows = db.Table('show',
+        db.Column('artist_id', db.Integer, db.ForeignKey('artist.id'), primary_key=True),
+        db.Column('venue_id', db.Integer, db.ForeignKey('venue.id'), primary_key=True),
         db.Column('start_time', db.DateTime(timezone=True)))
 
 class Venue(db.Model):
-    __tablename__ = 'venues'
+    __tablename__ = 'venue'
 
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String)
@@ -48,7 +48,7 @@ class Venue(db.Model):
     website = db.Column(db.String(120))
     seeking_talent = db.Column(db.Boolean, nullable=False, default=False)
     seeking_description = db.Column(db.String)
-    area_id = db.Column(db.Integer, db.ForeignKey('areas.id'), nullable=False)
+    area_id = db.Column(db.Integer, db.ForeignKey('area.id'), nullable=False)
 
     def __repr__(self):
       return f'<List: {self.id} {self.name}>'
@@ -56,7 +56,7 @@ class Venue(db.Model):
     # TODO: implement any missing fields, as a database migration using Flask-Migrate
 
 class Artist(db.Model):
-    __tablename__ = 'artists'
+    __tablename__ = 'artist'
 
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String)
@@ -74,7 +74,7 @@ class Artist(db.Model):
     # TODO: implement any missing fields, as a database migration using Flask-Migrate
 
 class Area(db.Model):
-    __tablename__ = 'areas'
+    __tablename__ = 'area'
   
     id = db.Column(db.Integer, primary_key=True)
     city = db.Column(db.String(120))
