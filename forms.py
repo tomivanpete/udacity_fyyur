@@ -229,6 +229,4 @@ class ArtistForm(FlaskForm):
         'website', validators=[URL()]
     )
 
-def enum_validator():
-    
 # TODO IMPLEMENT NEW ARTIST FORM AND NEW SHOW FORM
