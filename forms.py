@@ -1,7 +1,7 @@
 from datetime import datetime
 from flask_wtf import FlaskForm
 from wtforms import StringField, SelectField, SelectMultipleField, DateTimeField, BooleanField
-from wtforms.validators import DataRequired, AnyOf, URL
+from wtforms.validators import DataRequired, AnyOf, URL, ValidationError
 
 class ShowForm(FlaskForm):
     artist_id = StringField(
@@ -229,4 +229,6 @@ class ArtistForm(FlaskForm):
         'website', validators=[URL()]
     )
 
+def enum_validator():
+    
 # TODO IMPLEMENT NEW ARTIST FORM AND NEW SHOW FORM
