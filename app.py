@@ -188,15 +188,23 @@ def show_venue(venue_id):
   data['past_shows'] = []
   data['upcoming_shows'] = []
   
-  upcoming_shows = Show.query.filter(Show.venue_id == venue.id).filter(Show.start_time >= datetime.datetime.now()).all()
-  data['upcoming_shows_count'] = len(upcoming_shows)
-  for show in upcoming_shows:
-    data['upcoming_shows'].append({'artist_id': show.artist.id, 'artist_name': show.artist.name, 'artist_image_link': show.artist.image_link, 'start_time': str(show.start_time)})
-  
-  past_shows = Show.query.filter(Show.venue_id == venue.id).filter(Show.start_time < datetime.datetime.now()).all()
+  past_shows = Show.query.join('artist').with_entities(
+    Artist.id.label('artist_id'), Artist.name.label('artist_name'), Artist.image_link.label('artist_image_link'), Show.start_time).filter(
+    Show.venue_id == venue.id,
+    Show.start_time <= datetime.datetime.now()
+  ).all()
   data['past_shows_count'] = len(past_shows)
   for show in past_shows:
-    data['past_shows'].append({'artist_id': show.artist.id, 'artist_name': show.artist.name, 'artist_image_link': show.artist.image_link, 'start_time': str(show.start_time)})
+    data['past_shows'].append({'artist_id': show.artist_id, 'artist_name': show.artist_name, 'artist_image_link': show.artist_image_link, 'start_time': str(show.start_time)})
+  
+  upcoming_shows = Show.query.join('artist').with_entities(
+    Artist.id.label('artist_id'), Artist.name.label('artist_name'), Artist.image_link.label('artist_image_link'), Show.start_time).filter(
+    Show.venue_id == venue.id,
+    Show.start_time > datetime.datetime.now()
+  ).all()
+  data['upcoming_shows_count'] = len(upcoming_shows)
+  for show in upcoming_shows:
+    data['upcoming_shows'].append({'artist_id': show.artist_id, 'artist_name': show.artist_name, 'artist_image_link': show.artist_image_link, 'start_time': str(show.start_time)})
   
   ### Mock Data ###
   # data1={
@@ -408,19 +416,23 @@ def show_artist(artist_id):
   data['past_shows'] = []
   data['upcoming_shows'] = []
   
-  #past_shows = Show.query.filter(Show.artist_id == artist.id).filter(Show.start_time <= datetime.datetime.now()).all()
-  past_shows = Show.query.join('venue').filter(
+  past_shows = Show.query.join('venue').with_entities(
+    Venue.id.label('venue_id'), Venue.name.label('venue_name'), Venue.image_link.label('venue_image_link'), Show.start_time).filter(
     Show.artist_id == artist.id,
     Show.start_time <= datetime.datetime.now()
   ).all()
   data['past_shows_count'] = len(past_shows)
   for show in past_shows:
-    data['past_shows'].append({'venue_id': show.venue.id, 'venue_name': show.venue.name, 'venue_image_link': show.venue.image_link, 'start_time': str(show.start_time)})
+    data['past_shows'].append({'venue_id': show.venue_id, 'venue_name': show.venue_name, 'venue_image_link': show.venue_image_link, 'start_time': str(show.start_time)})
   
-  upcoming_shows = Show.query.filter(Show.artist_id == artist.id).filter(Show.start_time > datetime.datetime.now()).all()
+  upcoming_shows = Show.query.join('venue').with_entities(
+    Venue.id.label('venue_id'), Venue.name.label('venue_name'), Venue.image_link.label('venue_image_link'), Show.start_time).filter(
+    Show.artist_id == artist.id,
+    Show.start_time > datetime.datetime.now()
+  ).all()
   data['upcoming_shows_count'] = len(upcoming_shows)
   for show in upcoming_shows:
-    data['upcoming_shows'].append({'venue_id': show.venue.id, 'venue_name': show.venue.name, 'venue_image_link': show.venue.image_link, 'start_time': str(show.start_time)})
+    data['upcoming_shows'].append({'venue_id': show.venue_id, 'venue_name': show.venue_name, 'venue_image_link': show.venue_image_link, 'start_time': str(show.start_time)})
   
   ### Mock Data ###
   # data1={
