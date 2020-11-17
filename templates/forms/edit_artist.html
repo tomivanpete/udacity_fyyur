@@ -3,7 +3,7 @@
 {% block content %}
   <div class="form-wrapper">
     <form class="form" method="post" action="/artists/{{artist.id}}/edit">
-      <h3 class="form-heading">Edit artist <em>{{ artist.name }}</em></h3>
+      <h3 class="form-heading">Edit artist <em>{{ artist.name }}</em><a href="{{ url_for('index') }}" title="Back to homepage"><i class="fa fa-home pull-right"></i></a></h3>
       <div class="form-group">
         <label for="name">Name</label>
         {{ form.name(class_ = 'form-control', value=artist.name, autofocus = true) }}
@@ -39,7 +39,15 @@
       <div class="form-group">
           <label for="genres">Facebook Link</label>
           {{ form.facebook_link(class_ = 'form-control', placeholder='http://', value=artist.facebook_link, autofocus = true) }}
-        </div>
+      </div>
+      <div class="form-group">
+        <label for="seeking_talent">Seeking Venue?</label>
+        {{ form.seeking_venue(class_='form-control', autofocus=false, value='seeking_venue', checked=artist.seeking_venue) }}
+      </div>
+      <div class="form-group">
+        <label for="seeking_description">Messsage for prospective venues</label>
+        {{ form.seeking_description(class_='form-control', value=artist.seeking_description, autofocus=false) }}
+      </div>
       <input type="submit" value="Save Artist" class="btn btn-primary btn-lg btn-block">
     </form>
   </div>

@@ -122,6 +122,9 @@ class VenueForm(FlaskForm):
     seeking_talent = BooleanField(
         'seeking_talent'
     )
+    seeking_description = StringField(
+        'seeking_description'
+    )
 
 class ArtistForm(FlaskForm):
     name = StringField(
@@ -227,6 +230,9 @@ class ArtistForm(FlaskForm):
     )
     website = StringField(
         'website', validators=[URL()]
+    )
+    seeking_description = StringField(
+        'seeking_description'
     )
 
 # TODO IMPLEMENT NEW ARTIST FORM AND NEW SHOW FORM

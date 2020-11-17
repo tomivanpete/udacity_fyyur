@@ -1,5 +1,5 @@
 {% extends 'layouts/main.html' %}
-{% block title %}Venue Search{% endblock %}
+{% block title %}{{ venue.name }} | Venue{% endblock %}
 {% block content %}
 <div class="row">
 	<div class="col-sm-6">
@@ -41,6 +41,8 @@
 			<i class="fas fa-moon"></i> Not currently seeking talent
 		</p>
 		{% endif %}
+		<input type="button" id="edit-venue-btn" data-id="{{ venue.id }}" class="btn btn-info" value="Edit details for {{ venue.name }}">
+		<input type="button" id="delete-venue-btn" data-id="{{ venue.id }}" class="btn btn-danger" value="Delete venue {{ venue.name }}">
 	</div>
 	<div class="col-sm-6">
 		<img src="{{ venue.image_link }}" alt="Venue Image" />

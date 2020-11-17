@@ -311,6 +311,7 @@ def create_venue_submission():
     facebook_link = request.form.get('facebook_link', '')
     website = request.form.get('website', '')
     seeking_talent = request.form.get('seeking_talent') != None
+    seeking_description = request.form.get('seeking_description', '')
         
     venue = Venue(name=name,
                   city=city,
@@ -321,7 +322,8 @@ def create_venue_submission():
                   image_link=image_link,
                   facebook_link=facebook_link,
                   website=website,
-                  seeking_talent=seeking_talent)
+                  seeking_talent=seeking_talent,
+                  seeking_description=seeking_description)
     db.session.add(venue)
     db.session.commit()
     # on successful db insert, flash success
@@ -349,6 +351,7 @@ def delete_venue(venue_id):
   try:
     Venue.query.filter(Venue.id == venue_id).delete()
     db.session.commit()
+    flash('Venue successfully deleted.')
   except:
     error = True
     db.session.rollback()
@@ -548,6 +551,8 @@ def edit_artist_submission(artist_id):
     artist.image_link = request.form.get('image_link', '')
     artist.facebook_link = request.form.get('facebook_link', '')
     artist.website = request.form.get('website', '')
+    artist.seeking_venue = request.form.get('seeking_venue') != None
+    artist.seeking_description = request.form.get('seeking_description', '')
     
     db.session.commit()
     # on successful db insert, flash success
@@ -602,6 +607,8 @@ def edit_venue_submission(venue_id):
     venue.image_link = request.form.get('image_link', '')
     venue.facebook_link = request.form.get('facebook_link', '')
     venue.website = request.form.get('website', '')
+    venue.seeking_talent = request.form.get('seeking_talent') != None
+    venue.seeking_description = request.form.get('seeking_description', '')
     
     db.session.commit()
     # on successful db insert, flash success
@@ -642,6 +649,7 @@ def create_artist_submission():
     facebook_link = request.form.get('facebook_link', '')
     website = request.form.get('website', '')
     seeking_venue = request.form.get('seeking_venue') != None
+    seeking_description = request.form.get('seeking_description', '')
 
     artist = Artist(name=name,
                   city=city,
@@ -651,7 +659,8 @@ def create_artist_submission():
                   image_link=image_link,
                   facebook_link=facebook_link,
                   website=website,
-                  seeking_venue=seeking_venue)
+                  seeking_venue=seeking_venue,
+                  seeking_description=seeking_description)
     db.session.add(artist)
     db.session.commit()
     # on successful db insert, flash success
