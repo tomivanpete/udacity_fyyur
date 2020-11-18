@@ -38,8 +38,9 @@
 			<i class="fas fa-moon"></i> Not currently seeking performance venues
 		</p>
 		{% endif %}
-		<div id="edit-artist-link">
-			<a href="/artists/{{ artist.id }}/edit">Edit details for {{ artist.name }}</a>
+		<div class="col-sm-6">
+			<a href="/artists/{{ artist.id }}/edit"><button id="edit-artist-btn" class="btn btn-default">Edit details for {{ artist.name }}</button></a>
+			<button id="delete-artist-btn" data-id="{{ artist.id }}" class="btn btn-danger">Delete {{ artist.name }}</button>
 		</div>
 	</div>
 	<div class="col-sm-6">
@@ -74,6 +75,7 @@
 		{% endfor %}
 	</div>
 </section>
+<script type="text/javascript" src="/static/js/delete.js"></script>
 
 {% endblock %}
 

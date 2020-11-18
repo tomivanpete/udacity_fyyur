@@ -41,8 +41,10 @@
 			<i class="fas fa-moon"></i> Not currently seeking talent
 		</p>
 		{% endif %}
-		<input type="button" id="edit-venue-btn" data-id="{{ venue.id }}" class="btn btn-info" value="Edit details for {{ venue.name }}">
-		<input type="button" id="delete-venue-btn" data-id="{{ venue.id }}" class="btn btn-danger" value="Delete venue {{ venue.name }}">
+		<div class="col-sm-6">
+			<a href="/venues/{{ venue.id }}/edit"><button id="edit-venue-btn" class="btn btn-default">Edit details for {{ venue.name }}</button></a>
+			<button id="delete-venue-btn" data-id="{{ venue.id }}" class="btn btn-danger">Delete {{ venue.name }}</button>
+		</div>
 	</div>
 	<div class="col-sm-6">
 		<img src="{{ venue.image_link }}" alt="Venue Image" />
@@ -76,6 +78,7 @@
 		{% endfor %}
 	</div>
 </section>
+<script type="text/javascript" src="/static/js/delete.js"></script>
 
 {% endblock %}
 

@@ -33,8 +33,8 @@ class Show(db.Model):
     __tablename__ = 'show'
 
     id = db.Column(db.Integer, primary_key=True)
-    artist_id = db.Column(db.Integer, db.ForeignKey('artist.id'), nullable=False)
-    venue_id = db.Column(db.Integer, db.ForeignKey('venue.id'), nullable=False)
+    artist_id = db.Column(db.Integer, db.ForeignKey('artist.id', ondelete='CASCADE'), nullable=False)
+    venue_id = db.Column(db.Integer, db.ForeignKey('venue.id', ondelete='CASCADE'), nullable=False)
     start_time = db.Column(db.DateTime(timezone=False), nullable=False)
     artist = db.relationship('Artist', back_populates='venues')
     venue = db.relationship('Venue', back_populates='artists')
@@ -57,7 +57,7 @@ class Venue(db.Model):
     website = db.Column(db.String(120))
     seeking_talent = db.Column(db.Boolean, nullable=False, default=False)
     seeking_description = db.Column(db.String)
-    artists = db.relationship('Show', back_populates='venue', lazy=True, cascade='all, delete-orphan')
+    artists = db.relationship('Show', back_populates='venue', lazy=True, cascade='all, delete', passive_deletes=True)
 
     def __repr__(self):
       return f'<Venue: {self.id} {self.name}>'
@@ -78,7 +78,7 @@ class Artist(db.Model):
     website = db.Column(db.String(120))
     seeking_venue = db.Column(db.Boolean, nullable=False, default=False)
     seeking_description = db.Column(db.String)
-    venues = db.relationship('Show', back_populates='artist', lazy=True, cascade='all, delete-orphan')
+    venues = db.relationship('Show', back_populates='artist', lazy=True, cascade='all, delete', passive_deletes=True)
 
     def __repr__(self):
       return f'<Artist: {self.id} {self.name}>'
@@ -184,6 +184,8 @@ def show_venue(venue_id):
   # shows the venue page with the given venue_id
   # TODO: replace with real venue data from the venues table, using venue_id
   venue = Venue.query.get(venue_id)
+  if venue is None:
+    return not_found_error('Venue ID does not exist')
   data = venue.__dict__
   data['past_shows'] = []
   data['upcoming_shows'] = []
@@ -360,7 +362,30 @@ def delete_venue(venue_id):
     db.session.close()
   if error:
     flash('An error occurred. Venue could not be deleted.')
+    abort(500)
   # BONUS CHALLENGE: Implement a button to delete a Venue on a Venue Page, have it so that
+  # clicking that button delete it from the db then redirect the user to the homepage
+  return render_template('pages/home.html')
+
+@app.route('/artists/<artist_id>', methods=['DELETE'])
+def delete_artist(artist_id):
+  # TODO: Complete this endpoint for taking an artist_id, and using
+  # SQLAlchemy ORM to delete a record. Handle cases where the session commit could fail.
+  error = False
+  try:
+    Artist.query.filter(Artist.id == artist_id).delete()
+    db.session.commit()
+    flash('Artist successfully deleted.')
+  except:
+    error = True
+    db.session.rollback()
+    print(sys.exc_info())
+  finally:
+    db.session.close()
+  if error:
+    flash('An error occurred. Artist could not be deleted.')
+    abort(500)
+  # BONUS CHALLENGE: Implement a button to delete an Artist on a Artist Page, have it so that
   # clicking that button delete it from the db then redirect the user to the homepage
   return render_template('pages/home.html')
 
@@ -414,8 +439,10 @@ def show_artist(artist_id):
   # shows the venue page with the given venue_id
   # TODO: replace with real venue data from the venues table, using venue_id
   artist = Artist.query.get(artist_id)
-  data = artist.__dict__
+  if artist is None:
+    return not_found_error('Artist ID does not exist')
   
+  data = artist.__dict__
   data['past_shows'] = []
   data['upcoming_shows'] = []
   
