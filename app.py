@@ -36,8 +36,8 @@ class Show(db.Model):
     artist_id = db.Column(db.Integer, db.ForeignKey('artist.id', ondelete='CASCADE'), nullable=False)
     venue_id = db.Column(db.Integer, db.ForeignKey('venue.id', ondelete='CASCADE'), nullable=False)
     start_time = db.Column(db.DateTime(timezone=False), nullable=False)
-    artist = db.relationship('Artist', back_populates='venues')
-    venue = db.relationship('Venue', back_populates='artists')
+    artist = db.relationship('Artist', back_populates='shows')
+    venue = db.relationship('Venue', back_populates='shows')
 
     def __repr__(self):
       return f'<Show ID: {self.id} Artist ID: {self.artist_id} Venue ID: {self.venue_id}>'
@@ -57,7 +57,7 @@ class Venue(db.Model):
     website = db.Column(db.String(120))
     seeking_talent = db.Column(db.Boolean, nullable=False, default=False)
     seeking_description = db.Column(db.String)
-    artists = db.relationship('Show', back_populates='venue', lazy=True, cascade='all, delete', passive_deletes=True)
+    shows = db.relationship('Show', back_populates='venue', lazy=True, cascade='all, delete', passive_deletes=True)
 
     def __repr__(self):
       return f'<Venue: {self.id} {self.name}>'
@@ -78,7 +78,7 @@ class Artist(db.Model):
     website = db.Column(db.String(120))
     seeking_venue = db.Column(db.Boolean, nullable=False, default=False)
     seeking_description = db.Column(db.String)
-    venues = db.relationship('Show', back_populates='artist', lazy=True, cascade='all, delete', passive_deletes=True)
+    shows = db.relationship('Show', back_populates='artist', lazy=True, cascade='all, delete', passive_deletes=True)
 
     def __repr__(self):
       return f'<Artist: {self.id} {self.name}>'
